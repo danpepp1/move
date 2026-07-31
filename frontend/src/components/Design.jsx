@@ -95,6 +95,8 @@ export default function Design() {
   // Fixed drawing area for the whole-place 2D view — sized from the packed
   // layout bounds (room dimensions only, so it stays stable while dragging).
   const wholeCanvas = useMemo(() => {
+    // Fit both the default packing AND wherever the rooms actually are, so a
+    // custom layout (taller/narrower than the packing) never gets clipped.
     const layout = autoLayout(rooms.map((r) => ({ ...r, origin_x: null, origin_y: null })));
     let w = 1;
     let l = 1;
@@ -102,10 +104,11 @@ export default function Design() {
       const o = layout[r.id] || { origin_x: 0, origin_y: 0 };
       w = Math.max(w, o.origin_x + (r.width_ft || 12));
       l = Math.max(l, o.origin_y + (r.length_ft || 12));
+      if (r.origin_x != null) w = Math.max(w, r.origin_x + (r.width_ft || 12));
+      if (r.origin_y != null) l = Math.max(l, r.origin_y + (r.length_ft || 12));
     }
     return { w: w + 3, l: l + 3 };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rooms.map((r) => `${r.id}:${r.width_ft}x${r.length_ft}`).join('|')]);
+  }, [rooms]);
 
   const patchItem = (id, patch) => {
     setItems((xs) => xs.map((i) => (i.id === id ? { ...i, ...patch } : i)));
@@ -205,7 +208,7 @@ export default function Design() {
 
       {scope === 'all' ? (
         <div className="fit-status">
-          <span className="muted">Drag rooms to match your floor plan · tap a room to edit it</span>
+          <span className="muted">Tap a room to edit it · drag to nudge the layout</span>
         </div>
       ) : (
         <div className="fit-status">
