@@ -87,7 +87,7 @@ app.post('/api/rooms', wrap((req, res) => {
 }));
 
 app.patch('/api/rooms/:id', wrap((req, res) => {
-  const { sets, params } = buildPatch(req.body, ['name', 'sort_order']);
+  const { sets, params } = buildPatch(req.body, ['name', 'sort_order', 'width_ft', 'length_ft']);
   if (sets.length) db.prepare(`UPDATE rooms SET ${sets.join(', ')} WHERE id = ?`).run(...params, req.params.id);
   res.json({ ok: true });
 }));
@@ -118,7 +118,10 @@ app.post('/api/items', wrap((req, res) => {
 }));
 
 app.patch('/api/items/:id', wrap((req, res) => {
-  const { sets, params } = buildPatch(req.body, ['name', 'status', 'est_price', 'actual_price', 'notes', 'sort_order']);
+  const { sets, params } = buildPatch(req.body, [
+    'name', 'status', 'est_price', 'actual_price', 'notes', 'sort_order',
+    'placed', 'pos_x', 'pos_y', 'foot_w', 'foot_l', 'height_ft', 'rotation',
+  ]);
   if (sets.length) db.prepare(`UPDATE items SET ${sets.join(', ')} WHERE id = ?`).run(...params, req.params.id);
   res.json({ ok: true });
 }));

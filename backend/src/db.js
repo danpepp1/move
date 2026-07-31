@@ -12,6 +12,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS rooms (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
+    width_ft    REAL,                            -- floor-plan dimensions (Design tab)
+    length_ft   REAL,
     sort_order  INTEGER DEFAULT 0,
     created_at  TEXT DEFAULT (datetime('now'))
   );
@@ -26,6 +28,14 @@ db.exec(`
     actual_price  REAL,                            -- what it actually cost once bought
     notes         TEXT,
     sort_order    INTEGER DEFAULT 0,
+    -- floor-plan placement (Design tab): footprint + position in feet
+    placed        INTEGER DEFAULT 0,             -- 1 = shown on the floor plan
+    pos_x         REAL,                          -- top-left corner, feet from room origin
+    pos_y         REAL,
+    foot_w        REAL,                          -- footprint width (x) in feet
+    foot_l        REAL,                          -- footprint length (y) in feet
+    height_ft     REAL,                          -- for the 3D box
+    rotation      INTEGER DEFAULT 0,             -- 0/90/180/270
     created_at    TEXT DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS idx_items_room ON items(room_id);
@@ -70,6 +80,21 @@ db.exec(`
 `);
 
 seedIfEmpty(db);
+
+// --- Floor-plan columns: idempotent migration so DBs created before the
+// Design feature (e.g. the deployed one) gain the new columns on next boot. ---
+const hasCol = (table, name) =>
+  db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === name);
+const addCol = (table, name, ddl) => { if (!hasCol(table, name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`); };
+addCol('rooms', 'width_ft', 'width_ft REAL');
+addCol('rooms', 'length_ft', 'length_ft REAL');
+addCol('items', 'placed', 'placed INTEGER DEFAULT 0');
+addCol('items', 'pos_x', 'pos_x REAL');
+addCol('items', 'pos_y', 'pos_y REAL');
+addCol('items', 'foot_w', 'foot_w REAL');
+addCol('items', 'foot_l', 'foot_l REAL');
+addCol('items', 'height_ft', 'height_ft REAL');
+addCol('items', 'rotation', 'rotation INTEGER DEFAULT 0');
 
 // --- tiny settings helpers ------------------------------------------------
 export const getSetting = (key) =>

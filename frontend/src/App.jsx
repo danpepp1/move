@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { api, getToken, setToken, money } from './api.js';
 import Rooms from './components/Rooms.jsx';
+import Design from './components/Design.jsx';
 import Logistics from './components/Logistics.jsx';
 import Setup from './components/Setup.jsx';
 
 const TABS = [
   { id: 'rooms', label: 'Rooms' },
+  { id: 'design', label: 'Design' },
   { id: 'logistics', label: 'Logistics' },
   { id: 'setup', label: 'Setup' },
 ];
@@ -57,6 +59,7 @@ export default function App() {
 
       <main>
         {tab === 'rooms' && <Rooms onChange={loadSummary} summary={summary} />}
+        {tab === 'design' && <Design />}
         {tab === 'logistics' && <Logistics onChange={loadSummary} />}
         {tab === 'setup' && <Setup onChange={loadSummary} />}
       </main>
