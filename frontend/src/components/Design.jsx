@@ -70,11 +70,15 @@ export default function Design() {
     const fp = has
       ? { foot_w: it.foot_w, foot_l: it.foot_l, height_ft: it.height_ft || defaultFootprint(it.name).height_ft }
       : defaultFootprint(it.name);
+    // Cascade each new piece from the top-left so they don't stack on one spot.
+    const n = placed.length;
+    const maxX = Math.max(0, W - fp.foot_w);
+    const maxY = Math.max(0, L - fp.foot_l);
     patchItem(it.id, {
       placed: 1,
       ...fp,
-      pos_x: round2(Math.max(0, (W - fp.foot_w) / 2)),
-      pos_y: round2(Math.max(0, (L - fp.foot_l) / 2)),
+      pos_x: round2(Math.min(0.5 + 1.2 * n, maxX)),
+      pos_y: round2(Math.min(0.5 + 1.2 * n, maxY)),
     });
     setSelectedId(it.id);
   };
