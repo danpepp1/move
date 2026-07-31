@@ -119,7 +119,7 @@ app.post('/api/items', wrap((req, res) => {
 
 app.patch('/api/items/:id', wrap((req, res) => {
   const { sets, params } = buildPatch(req.body, [
-    'name', 'status', 'est_price', 'actual_price', 'notes', 'sort_order',
+    'name', 'status', 'est_price', 'actual_price', 'notes', 'url', 'sort_order',
     'placed', 'pos_x', 'pos_y', 'foot_w', 'foot_l', 'height_ft', 'rotation',
   ]);
   if (sets.length) db.prepare(`UPDATE items SET ${sets.join(', ')} WHERE id = ?`).run(...params, req.params.id);

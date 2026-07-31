@@ -29,6 +29,7 @@ db.exec(`
     est_price     REAL,                            -- ballpark, for the budget total
     actual_price  REAL,                            -- what it actually cost once bought
     notes         TEXT,
+    url           TEXT,                          -- where you're buying it from
     sort_order    INTEGER DEFAULT 0,
     -- floor-plan placement (Design tab): footprint + position in feet
     placed        INTEGER DEFAULT 0,             -- 1 = shown on the floor plan
@@ -92,6 +93,7 @@ addCol('rooms', 'width_ft', 'width_ft REAL');
 addCol('rooms', 'length_ft', 'length_ft REAL');
 addCol('rooms', 'origin_x', 'origin_x REAL');
 addCol('rooms', 'origin_y', 'origin_y REAL');
+addCol('items', 'url', 'url TEXT');
 addCol('items', 'placed', 'placed INTEGER DEFAULT 0');
 addCol('items', 'pos_x', 'pos_x REAL');
 addCol('items', 'pos_y', 'pos_y REAL');

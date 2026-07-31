@@ -102,6 +102,14 @@ html, body {
 .item-name { flex: 1; }
 .item.done .item-name, .task.done .item-name { text-decoration: line-through; color: var(--muted); }
 
+/* item name + its store link stacked, so the row stays one line tall */
+.item-main { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 2px; justify-content: center; }
+.item-main .item-name { flex: none; }
+.store-link { align-self: flex-start; font-size: 12px; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.store-link:hover { text-decoration: underline; }
+.link-input { font-size: 13px; padding: 5px 8px; }
+.icon.linked { color: var(--accent); }
+
 .check {
   background: transparent; border: 0; color: var(--accent);
   font-size: 20px; cursor: pointer; line-height: 1; padding: 0 2px;

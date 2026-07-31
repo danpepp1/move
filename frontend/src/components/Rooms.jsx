@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api, money } from '../api.js';
+import { api, money, storeName, normalizeUrl } from '../api.js';
 
 export default function Rooms({ onChange }) {
   const [rooms, setRooms] = useState([]);
@@ -97,6 +97,8 @@ function ItemRow({ item, onChange }) {
   const bought = item.status === 'bought';
   const [editingPrice, setEditingPrice] = useState(false);
   const [priceVal, setPriceVal] = useState('');
+  const [editingLink, setEditingLink] = useState(false);
+  const [linkVal, setLinkVal] = useState('');
 
   const toggle = async () => {
     await api.updateItem(item.id, { status: bought ? 'need' : 'bought' });
@@ -110,6 +112,12 @@ function ItemRow({ item, onChange }) {
     onChange();
   };
 
+  const saveLink = async () => {
+    setEditingLink(false);
+    const url = normalizeUrl(linkVal) || null;
+    if (url !== (item.url || null)) { await api.updateItem(item.id, { url }); onChange(); }
+  };
+
   const remove = async () => { await api.deleteItem(item.id); onChange(); };
 
   return (
@@ -117,7 +125,20 @@ function ItemRow({ item, onChange }) {
       <button className="check" onClick={toggle} title={bought ? 'Mark as still needed' : 'Mark as bought'}>
         {bought ? '☑' : '☐'}
       </button>
-      <span className="item-name">{item.name}</span>
+      <div className="item-main">
+        <span className="item-name">{item.name}</span>
+        {editingLink ? (
+          <input className="link-input" type="url" inputMode="url" autoFocus placeholder="paste product link…"
+            value={linkVal}
+            onChange={(e) => setLinkVal(e.target.value)}
+            onBlur={saveLink}
+            onKeyDown={(e) => { if (e.key === 'Enter') saveLink(); if (e.key === 'Escape') setEditingLink(false); }} />
+        ) : item.url ? (
+          <a className="store-link" href={item.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+            🔗 {storeName(item.url)} ↗
+          </a>
+        ) : null}
+      </div>
       {editingPrice ? (
         <input className="price inline" type="number" min="0" step="1" autoFocus
           value={priceVal}
@@ -134,6 +155,8 @@ function ItemRow({ item, onChange }) {
             : (item.est_price != null ? money(item.est_price) : '+$')}
         </button>
       )}
+      <button className={item.url ? 'icon linked' : 'icon'} title={item.url ? 'Edit link' : 'Add a link'}
+        onClick={() => { setLinkVal(item.url || ''); setEditingLink(true); }}>🔗</button>
       <button className="icon danger" onClick={remove} title="Delete item">✕</button>
     </div>
   );

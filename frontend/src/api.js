@@ -64,3 +64,29 @@ export const api = {
 
 export const money = (n) =>
   new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n || 0);
+
+// Add https:// if the user pasted a bare domain; empty string clears the link.
+export function normalizeUrl(raw) {
+  const s = (raw || '').trim();
+  if (!s) return '';
+  return /^https?:\/\//i.test(s) ? s : `https://${s}`;
+}
+
+const STORES = {
+  'ikea.com': 'IKEA', 'wayfair.com': 'Wayfair', 'amazon.com': 'Amazon', 'target.com': 'Target',
+  'walmart.com': 'Walmart', 'westelm.com': 'West Elm', 'cb2.com': 'CB2', 'crateandbarrel.com': 'Crate & Barrel',
+  'article.com': 'Article', 'ashleyfurniture.com': 'Ashley', 'overstock.com': 'Overstock', 'homedepot.com': 'Home Depot',
+  'lowes.com': "Lowe's", 'costco.com': 'Costco', 'potterybarn.com': 'Pottery Barn', 'macys.com': "Macy's",
+  'bestbuy.com': 'Best Buy', 'etsy.com': 'Etsy', 'homegoods.com': 'HomeGoods', 'bedbathandbeyond.com': 'Bed Bath & Beyond',
+  'facebook.com': 'FB Marketplace', 'offerup.com': 'OfferUp', 'nfm.com': 'Nebraska Furniture Mart', 'apt2b.com': 'Apt2B',
+};
+
+// A friendly store label from a product URL's domain.
+export function storeName(url) {
+  try {
+    const h = new URL(normalizeUrl(url)).hostname.replace(/^www\./, '');
+    for (const [d, n] of Object.entries(STORES)) if (h === d || h.endsWith('.' + d)) return n;
+    const base = h.split('.').slice(-2, -1)[0] || h;
+    return base.charAt(0).toUpperCase() + base.slice(1);
+  } catch { return 'link'; }
+}
