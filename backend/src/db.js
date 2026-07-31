@@ -14,6 +14,8 @@ db.exec(`
     name        TEXT NOT NULL,
     width_ft    REAL,                            -- floor-plan dimensions (Design tab)
     length_ft   REAL,
+    origin_x    REAL,                            -- room position in the whole-apartment layout (feet)
+    origin_y    REAL,
     sort_order  INTEGER DEFAULT 0,
     created_at  TEXT DEFAULT (datetime('now'))
   );
@@ -88,6 +90,8 @@ const hasCol = (table, name) =>
 const addCol = (table, name, ddl) => { if (!hasCol(table, name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`); };
 addCol('rooms', 'width_ft', 'width_ft REAL');
 addCol('rooms', 'length_ft', 'length_ft REAL');
+addCol('rooms', 'origin_x', 'origin_x REAL');
+addCol('rooms', 'origin_y', 'origin_y REAL');
 addCol('items', 'placed', 'placed INTEGER DEFAULT 0');
 addCol('items', 'pos_x', 'pos_x REAL');
 addCol('items', 'pos_y', 'pos_y REAL');

@@ -87,7 +87,7 @@ app.post('/api/rooms', wrap((req, res) => {
 }));
 
 app.patch('/api/rooms/:id', wrap((req, res) => {
-  const { sets, params } = buildPatch(req.body, ['name', 'sort_order', 'width_ft', 'length_ft']);
+  const { sets, params } = buildPatch(req.body, ['name', 'sort_order', 'width_ft', 'length_ft', 'origin_x', 'origin_y']);
   if (sets.length) db.prepare(`UPDATE rooms SET ${sets.join(', ')} WHERE id = ?`).run(...params, req.params.id);
   res.json({ ok: true });
 }));

@@ -187,6 +187,7 @@ button:disabled { opacity: 0.5; }
 .room-wall { fill: none; stroke: var(--muted); stroke-width: 2; }
 .grid-line { stroke: #24344d; stroke-width: 0.02; }
 .furn-label { fill: #0b1220; font-weight: 700; pointer-events: none; }
+.room-name-label { fill: #cbd5e1; font-weight: 700; pointer-events: none; }
 .furn.selected rect { stroke: #fff !important; stroke-width: 0.12 !important; }
 .furn.oob rect { stroke: var(--danger) !important; stroke-width: 0.1 !important; }
 .planner3d { width: 100%; height: 56vh; border-radius: 10px; overflow: hidden; }
